@@ -16,7 +16,8 @@ public class ApplicationSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/public/**").permitAll()  // Allow access to public endpoints
+                        //.requestMatchers("/image/**").permitAll()
+                        //.requestMatchers("/order/**").permitAll()
                         .anyRequest().authenticated()               // Secure all other endpoints
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2

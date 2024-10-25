@@ -13,22 +13,23 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
+@RequestMapping("/order")
 public class OrderController {
 
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/orders")
+    @GetMapping("/all")
     List<OrderBar> getOrders() {
         return orderService.fetchOrderList();
     }
 
-    @GetMapping("/orders/{idUser}")
+    @GetMapping("/{idUser}")
     List<OrderBar> getOrdersByUserId(@PathVariable("id") String idUser) {
         return orderService.fetchOrderListByUser(idUser);
     }
 
-    @PostMapping("/order")
+    @PostMapping()
     ResponseEntity createOrder(@RequestBody SingleOrder orderBar) throws Exception {
         Date df = new SimpleDateFormat("dd/MM/yyyy").parse(orderBar.getDateOrder());
         if(df.before(new Date())){
@@ -37,7 +38,7 @@ public class OrderController {
         return orderService.saveOrder(orderBar);
     }
 
-    @PutMapping("/order/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity updateOrder(@RequestBody SingleOrder orderBar, @PathVariable("id") Integer orderId) throws Exception {
         Date df = new SimpleDateFormat("dd/MM/yyyy").parse(orderBar.getDateOrder());
         if(df.before(new Date())){
@@ -46,7 +47,7 @@ public class OrderController {
         return orderService.updateOrder(orderBar, orderId);
     }
 
-    @DeleteMapping("/order/{id}")
+    @DeleteMapping("/{id}")
     public String deleteOrderById(@PathVariable("id") Integer orderId) {
         orderService.deleteOrderById(orderId);
         return "Deleted Successfully";
