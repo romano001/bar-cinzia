@@ -46,6 +46,16 @@ public class OrderServiceImplementation implements OrderService{
         return json;
     }
 
+    private boolean EmptyOrder(OrderBar order){
+        List<OrderedItems> listOrderedItems = (List) orderedItemsRepository.findAll();
+        for(OrderedItems orderItem : listOrderedItems){
+            if(orderItem.getOrderBar().getOrderId() == order.getOrderId()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Save operation
     @Override
     public ResponseEntity saveOrder(SingleOrder orderBar) throws Exception
@@ -64,9 +74,9 @@ public class OrderServiceImplementation implements OrderService{
                 OrderedItems order = new OrderedItems();
                 order.setQuantity(orderItem.getQuantity());
                 order.setItem(item);
-                orderListItems.addLast(order);
                 order.setOrderBar(orderFinal);
                 if(orderItem.getQuantity() > 0) {
+                    orderListItems.addLast(order);
                     orderedItemsRepository.save(order);
                 }
                 else {
@@ -75,7 +85,12 @@ public class OrderServiceImplementation implements OrderService{
             }
         }
         orderFinal.setOrderedItems(orderListItems);
-        return new ResponseEntity(orderRepository.save(orderFinal), HttpStatus.OK);
+
+        if(orderFinal.getOrderedItems().size() > 0){
+            return new ResponseEntity(orderRepository.save(orderFinal), HttpStatus.OK);
+        } else{
+            return new ResponseEntity("The order must contain at least one item!", HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     // Read operation
@@ -133,7 +148,11 @@ public class OrderServiceImplementation implements OrderService{
             }
         }
 
-        return new ResponseEntity(orderRepository.save(orderBarDB), HttpStatus.OK);
+        if(EmptyOrder(orderBarDB)){
+            return new ResponseEntity("The order must contain at least one item!", HttpStatus.NOT_ACCEPTABLE);
+        } else{
+            return new ResponseEntity(orderRepository.save(orderBarDB), HttpStatus.OK);
+        }
     }
 
     // Delete operation
