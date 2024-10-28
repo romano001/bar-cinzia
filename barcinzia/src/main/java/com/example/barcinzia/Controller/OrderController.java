@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class OrderController {
     @PostMapping()
     ResponseEntity createOrder(@RequestBody SingleOrder orderBar) throws Exception {
         Date df = new SimpleDateFormat("dd/MM/yyyy").parse(orderBar.getDateOrder());
-        if(df.before(new Date())){
+        if(df.before(Date.from(Instant.now().minus(1, ChronoUnit.DAYS)))){
             return new ResponseEntity("The order date cannot be earlier than today!", HttpStatus.NOT_ACCEPTABLE);
         }
         return orderService.saveOrder(orderBar);
@@ -42,7 +44,8 @@ public class OrderController {
     @PutMapping("/{id}")
     public ResponseEntity updateOrder(@RequestBody SingleOrder orderBar, @PathVariable("id") Integer orderId) throws Exception {
         Date df = new SimpleDateFormat("dd/MM/yyyy").parse(orderBar.getDateOrder());
-        if(df.before(new Date())){
+        System.out.println("Data: " + Date.from(Instant.now().minus(1, ChronoUnit.DAYS)));
+        if(df.before(Date.from(Instant.now().minus(1, ChronoUnit.DAYS)))){
             return new ResponseEntity("The order date cannot be earlier than today!", HttpStatus.NOT_ACCEPTABLE);
         }
         return orderService.updateOrder(orderBar, orderId);

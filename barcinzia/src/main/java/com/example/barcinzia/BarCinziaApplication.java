@@ -35,8 +35,8 @@ public class BarCinziaApplication {
 		paninoPorchetta.setName("Panino con la porchetta");
 		paninoPorchetta.setType(ItemType.valueOf("FOOD"));
 		paninoPorchetta.setPrice(6.50);
-		paninoPorchettaImg.setLink("https://blog.giallozafferano.it/spuntidibonta/wp-content/uploads/2022/07/panino-con-porchetta.jpg0");
-		paninoPorchettaImg.setDescription("Panino con lattuga, pomodoro e cotoletta");
+		paninoPorchettaImg.setLink("https://blog.giallozafferano.it/spuntidibonta/wp-content/uploads/2022/07/panino-con-porchetta.jpg");
+		paninoPorchettaImg.setDescription("Panino con porchetta, scamorza e salsa bourguignonne");
 		paninoPorchetta.setImage(paninoPorchettaImg);
 
 		cocaColaZero.setName("Coca Cola Zero Zuccheri");

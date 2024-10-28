@@ -8,8 +8,6 @@ import java.util.List;
 @Data
 public class SingleOrder {
 
-    private String idUser;
-
     private String dateOrder;
 
     private List<OrderedItems> orderedItemsList;

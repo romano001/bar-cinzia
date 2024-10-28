@@ -101,10 +101,6 @@ public class OrderServiceImplementation implements OrderService{
     {
         OrderBar orderBarDB = orderRepository.findById(orderId).get();
 
-        if (Objects.nonNull(orderBar.getIdUser()) && !"".equalsIgnoreCase(orderBar.getIdUser())) {
-            orderBarDB.setIdUser(orderBar.getIdUser());
-        }
-
         if (Objects.nonNull(orderBar.getDateOrder()) && !"".equalsIgnoreCase(orderBar.getDateOrder())) {
             orderBarDB.setDateOrder(orderBar.getDateOrder());
         }
@@ -123,7 +119,12 @@ public class OrderServiceImplementation implements OrderService{
                 order.setItem(item);
                 orderListItems.addLast(order);
                 order.setOrderBar(orderBarDB);
-                orderedItemsRepository.save(order);
+                if(orderItem.getQuantity() > 0) {
+                    orderedItemsRepository.save(order);
+                }
+                else {
+                    orderedItemsRepository.delete(order);
+                }
             }
         }
 
