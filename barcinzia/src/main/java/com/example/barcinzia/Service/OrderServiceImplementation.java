@@ -66,7 +66,12 @@ public class OrderServiceImplementation implements OrderService{
                 order.setItem(item);
                 orderListItems.addLast(order);
                 order.setOrderBar(orderFinal);
-                orderedItemsRepository.save(order);
+                if(orderItem.getQuantity() > 0) {
+                    orderedItemsRepository.save(order);
+                }
+                else {
+                    orderedItemsRepository.delete(order);
+                }
             }
         }
         orderFinal.setOrderedItems(orderListItems);
