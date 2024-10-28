@@ -20,9 +20,10 @@ public class ItemController {
         return itemService.fetchItemList();
     }
 
-    @GetMapping("/{type}")
-    List<Item> getItemsByType(@PathVariable("type") ItemType type) {
-        return itemService.fetchItemListByType(type);
+    @GetMapping("/all/{type}")
+    List<Item> getItemsByType(@PathVariable("type") String type) {
+        ItemType typeItem = ItemType.valueOf(type.toUpperCase());
+        return itemService.fetchItemListByType(typeItem);
     }
 
     @GetMapping("/{name}")

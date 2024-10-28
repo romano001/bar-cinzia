@@ -20,7 +20,6 @@ public class OrderBar {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer orderId;
 
-    @Column(nullable = false)
     private String idUser;
 
     @Column(nullable = false)

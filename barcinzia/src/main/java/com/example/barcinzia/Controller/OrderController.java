@@ -3,6 +3,7 @@ package com.example.barcinzia.Controller;
 import com.example.barcinzia.Entity.OrderBar;
 import com.example.barcinzia.Model.SingleOrder;
 import com.example.barcinzia.Service.OrderService;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,13 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/all")
-    List<OrderBar> getOrders() {
+    List<OrderBar> getOrders() throws net.minidev.json.parser.ParseException {
         return orderService.fetchOrderList();
     }
 
-    @GetMapping("/{idUser}")
-    List<OrderBar> getOrdersByUserId(@PathVariable("id") String idUser) {
-        return orderService.fetchOrderListByUser(idUser);
+    @GetMapping("/user")
+    List<OrderBar> getOrdersByUserId() throws ParseException {
+        return orderService.fetchOrderListByUser();
     }
 
     @PostMapping()

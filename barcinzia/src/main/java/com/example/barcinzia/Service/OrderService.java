@@ -1,8 +1,8 @@
 package com.example.barcinzia.Service;
 
 import com.example.barcinzia.Entity.OrderBar;
-import com.example.barcinzia.Entity.OrderedItems;
 import com.example.barcinzia.Model.SingleOrder;
+import net.minidev.json.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface OrderService {
 
     // Read operation
     List<OrderBar> fetchOrderList();
-    List<OrderBar> fetchOrderListByUser(String idUser);
+    List<OrderBar> fetchOrderListByUser() throws ParseException;
 
     // Update operation
     ResponseEntity updateOrder(SingleOrder orderBar, Integer orderId);

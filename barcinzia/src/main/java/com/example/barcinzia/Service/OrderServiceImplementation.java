@@ -7,9 +7,15 @@ import com.example.barcinzia.Model.SingleOrder;
 import com.example.barcinzia.Repository.ItemRepository;
 import com.example.barcinzia.Repository.OrderRepository;
 import com.example.barcinzia.Repository.OrderedItemsRepository;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,12 +32,26 @@ public class OrderServiceImplementation implements OrderService{
     @Autowired
     private OrderedItemsRepository orderedItemsRepository;
 
+    private String token() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JwtAuthenticationToken oauthToken = (JwtAuthenticationToken) authentication;
+        return oauthToken.getToken().getTokenValue();
+    }
+
+    private JSONObject decodeToken(String token) throws ParseException {
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String payload = new String(decoder.decode(token.split("\\.")[1]));
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(payload);
+        return json;
+    }
+
     // Save operation
     @Override
     public ResponseEntity saveOrder(SingleOrder orderBar) throws Exception
     {
         OrderBar orderFinal = new OrderBar();
-        orderFinal.setIdUser(orderBar.getIdUser());
+        orderFinal.setIdUser((String) decodeToken(token()).get("name"));
         orderFinal.setDateOrder(orderBar.getDateOrder());
         List<OrderedItems> orderedItems = orderBar.getOrderedItemsList();
         List<OrderedItems> orderListItems = new ArrayList<>(0);
@@ -55,19 +75,19 @@ public class OrderServiceImplementation implements OrderService{
 
     // Read operation
     @Override
-    public List<OrderBar> fetchOrderList()
-    {
+    public List<OrderBar> fetchOrderList() {
         return (List<OrderBar>) orderRepository.findAll();
     }
 
     @Override
-    public List<OrderBar> fetchOrderListByUser(String idUser)
-    {
+    public List<OrderBar> fetchOrderListByUser() throws ParseException {
         List<OrderBar> orderBarByUser = new ArrayList<>(0);
         List<OrderBar> ordersBar = (List<OrderBar>)  orderRepository.findAll();
 
+        String user = (String) decodeToken(token()).get("name");
+
         for(OrderBar orderBar : ordersBar){
-            if(Objects.equals(orderBar.getIdUser(), idUser)){
+            if(Objects.equals(orderBar.getIdUser(), user)){
                 orderBarByUser.addLast(orderBar);
             }
         }
