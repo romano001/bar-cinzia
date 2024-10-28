@@ -3,6 +3,8 @@ package com.example.barcinzia.Service;
 import com.example.barcinzia.Entity.Item;
 import com.example.barcinzia.Entity.OrderBar;
 import com.example.barcinzia.Entity.OrderedItems;
+import com.example.barcinzia.Enum.OrderStatus;
+import com.example.barcinzia.Model.ItemsInOrder;
 import com.example.barcinzia.Model.SingleOrder;
 import com.example.barcinzia.Repository.ItemRepository;
 import com.example.barcinzia.Repository.OrderRepository;
@@ -10,6 +12,7 @@ import com.example.barcinzia.Repository.OrderedItemsRepository;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +66,7 @@ public class OrderServiceImplementation implements OrderService{
         OrderBar orderFinal = new OrderBar();
         orderFinal.setIdUser((String) decodeToken(token()).get("name"));
         orderFinal.setDateOrder(orderBar.getDateOrder());
+        orderFinal.setStatusOrder(OrderStatus.RECEIVED);
         List<OrderedItems> orderedItems = orderBar.getOrderedItemsList();
         List<OrderedItems> orderListItems = new ArrayList<>(0);
 
@@ -113,6 +117,29 @@ public class OrderServiceImplementation implements OrderService{
         }
 
         return orderBarByUser;
+    }
+
+    @Override
+    public ResponseEntity fetchItemsListByOrder(Integer orderId){
+
+        if(!orderRepository.findById(orderId).isPresent()){
+            return new ResponseEntity("This order doesn't exist in our system!", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        List<ItemsInOrder> orderedItemsByOrder = new ArrayList<>(0);
+        List<OrderedItems> orderedItemsBar = (List<OrderedItems>) orderedItemsRepository.findAll();
+
+        for(OrderedItems orderedItem : orderedItemsBar){
+            if(Objects.equals(orderedItem.getOrderBar().getOrderId(), orderId)){
+                ItemsInOrder temp = new ItemsInOrder();
+                temp.setIdOrder(orderId);
+                temp.setItem(itemRepository.findById(orderedItem.getItem().getItemId()).get());
+                temp.setQuantity(orderedItem.getQuantity());
+                orderedItemsByOrder.addLast(temp);
+            }
+        }
+
+        return new ResponseEntity(orderedItemsByOrder, HttpStatus.OK);
     }
 
     // Update operation

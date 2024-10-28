@@ -1,5 +1,6 @@
 package com.example.barcinzia.Entity;
 
+import com.example.barcinzia.Enum.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,8 +26,10 @@ public class OrderBar {
     @Column(nullable = false)
     private String dateOrder;
 
-    @OneToMany(mappedBy = "orderBar")
+    @OneToMany(mappedBy = "orderBar", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<OrderedItems> orderedItems;
+
+    private OrderStatus statusOrder;
 
 }
