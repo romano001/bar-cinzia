@@ -20,7 +20,7 @@ public class OrderedItems {
 
     private Integer quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", referencedColumnName = "itemId")
     private Item item;
 
